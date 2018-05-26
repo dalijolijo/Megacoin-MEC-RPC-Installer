@@ -1,10 +1,9 @@
-# BitCore RPC Server - Dockerfile (04-2018)
+# MegaCoin RPC Server - Dockerfile (05-2018)
 #
-# This Dockerfile will install all required stuff to run a BitCore RPC Server and is based on script btxsetup.sh (see: https://github.com/dArkjON/Bitcore-BTX-RPC-Installer/blob/master/btxsetup.sh)
-# BitCore Repo : https://github.com/LIMXTEC/BitCore/
-# E-Mail: info@bitcore.cc
+# This Dockerfile will install all required stuff to run a MegaCoin RPC Server.
+# MegaCoin Repo : https://github.com/LIMXTEC/Megacoin
 # 
-# To build a docker image for btx-rpc-server from the Dockerfile the bitcore.conf is also needed.
+# To build a docker image for mec-rpc-server from the Dockerfile the megacoin.conf is also needed.
 # See BUILD_README.md for further steps.
 
 # Use an official Ubuntu runtime as a parent image
@@ -22,28 +21,18 @@ USER root
 SHELL ["/bin/bash", "-c"]
 
 # Define environment variable
-ENV BTXPWD "bitcore"
+ENV MECPWD "megacoin"
 
-RUN echo '*** BitCore BTX RPC Server ***'
+RUN echo '*** MegaCoin MEC RPC Server ***'
 
-#
-# Step 1/10 - creating bitcore user
-#
-RUN echo '*** Step 1/10 - creating bitcore user ***' && \
-    adduser --disabled-password --gecos "" bitcore && \
-    usermod -a -G sudo,bitcore bitcore && \
-    echo bitcore:$BTXPWD | chpasswd
+# Creating megacoin user
+RUN echo '*** Step 1/10 - creating megacoin user ***' && \
+    adduser --disabled-password --gecos "" megacoin && \
+    usermod -a -G sudo,megacoin megacoin && \
+    echo megacoin:$MECPWD | chpasswd
 
-#
-# Step 2/10 - Allocating 2GB Swapfile
-#
-RUN echo '*** Step 2/10 - Allocating 2GB Swapfile ***' && \
-    echo 'not needed: skipped'
-
-#
-# Step 3/10 - Running updates and installing required packages
-#
-RUN echo '*** Step 3/10 - Running updates and installing required packages ***' && \
+# Running updates and installing required packages
+RUN echo '*** Running updates and installing required packages ***' && \
     apt-get update -y && \
     apt-get dist-upgrade -y && \
     apt-get install -y  apt-utils \
@@ -71,61 +60,39 @@ RUN echo '*** Step 3/10 - Running updates and installing required packages ***' 
     apt-get install -y  libdb4.8-dev \
                         libdb4.8++-dev
 
-#
-# Step 4/10 - Cloning and Compiling BitCore Wallet
-#
-RUN echo '*** Step 4/10 - Cloning and Compiling BitCore Wallet ***' && \
+# Cloning and Compiling MegaCoin Wallet
+RUN echo '*** Cloning and Compiling MegaCoin Wallet ***' && \
     cd && \
-    echo "Execute a git clone of LIMXTEC/BitCore. Please wait..." && \
-    git clone https://github.com/LIMXTEC/BitCore.git && \
-    cd BitCore && \
+    echo "Execute a git clone of LIMXTEC/Megacoin. Please wait..." && \
+    git clone https://github.com/LIMXTEC/Megacoin.git && \
+    cd Megacoin && \
     ./autogen.sh && \
     ./configure --disable-dependency-tracking --enable-tests=no --without-gui --disable-hardening && \
     make && \
     cd && \
-    cd BitCore/src && \
-    strip bitcored && \
-    cp bitcored /usr/local/bin && \
-    strip bitcore-cli && \
-    cp bitcore-cli /usr/local/bin && \
-    chmod 775 /usr/local/bin/bitcore* && \
+    cd Megacoin/src && \
+    strip megacoind && \
+    cp megacoind /usr/local/bin && \
+    strip megacoin-cli && \
+    cp megacoin-cli /usr/local/bin && \
+    chmod 775 /usr/local/bin/megacoin* && \
     cd && \
-    rm -rf BitCore
+    rm -rf Megacoin
 
-#
-# Step 5/10 - Adding firewall rules
-#
-RUN echo '*** Step 5/10 - Adding firewall rules ***' && \
-    echo 'must be configured on the socker host: skipped'
+# Configure megacoin.conf	
+COPY megacoin.conf /tmp	
+RUN echo '*** Configure megacoin.conf ***' && \	
+    chown megacoin:megacoin /tmp/megacoin.conf && \	
+    sudo -u megacoin mkdir -p /home/megacoin/.megacoin && \	
+    sudo -u megacoin cp /tmp/megacoin.conf /home/megacoin/.megacoin/megacoin.conf
 
-#
-# Step 6/10 - Configure bitcore.conf	
-#	
-COPY bitcore.conf /tmp	
-RUN echo '*** Step 6/10 - Configure bitcore.conf ***' && \	
-    chown bitcore:bitcore /tmp/bitcore.conf && \	
-    sudo -u bitcore mkdir -p /home/bitcore/.bitcore && \	
-    sudo -u bitcore cp /tmp/bitcore.conf /home/bitcore/.bitcore/bitcore.conf
-
-#
-# Step 7/10 - Adding bitcore daemon as a service
-#
-RUN echo '*** Step 7/10 - Adding bitcore daemon ***' && \
-    echo 'docker not supported systemd: skipped'
-
-#
 # Copy Supervisor Configuration
-#
 COPY *.sv.conf /etc/supervisor/conf.d/
 
-#
 # Logging outside docker container
-#
 VOLUME /var/log
 
-#
 # Copy start script
-#
 RUN echo '*** Copy start script ***'
 COPY start.sh /usr/local/bin/start.sh
 RUN rm -f /var/log/access.log && mkfifo -m 0666 /var/log/access.log && \

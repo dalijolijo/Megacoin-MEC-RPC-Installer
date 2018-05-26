@@ -1,4 +1,4 @@
-# BitCore RPC Server - Run Docker Image
+# MegaCoin RPC Server - Run Docker Image
 
 ## Adding firewall rules
 Open needed ports on your docker host server.
@@ -15,38 +15,38 @@ yes | ufw enable
 
 ## Pull docker image
 ```
-docker pull <repository>/btx-rpc-server
+docker pull <repository>/mec-rpc-server
 ```
 
 ## Run docker container
 ```
-docker run -p 40332:40332 -p 8555:8555 -p 9051:9051 --name btx-rpc-server -e BTXPWD='NEW_BTX_PWD' -v /home/bitcore:/home/bitcore:rw -d <repository>/btx-rpc-server
+docker run -p 40332:40332 -p 8555:8555 -p 9051:9051 --name mec-rpc-server -e MECPWD='NEW_MEC_PWD' -v /home/megacoin:/home/megacoin:rw -d <repository>/mec-rpc-server
 docker ps
 ```
 
 ## Debbuging within a container (after start.sh execution)
 Please execute ```docker run``` without option ```--entrypoint bash``` before you execute this commands:
 ```
-tail -f /home/bitcore/.bitcore/debug.log
+tail -f /home/megacoin/.megacoin/debug.log
 
 docker ps
-docker exec -it btx-rpc-server bash
-  # you are inside the btx-rpc-server container
-  root@container# supervisorctl status bitcored
+docker exec -it mec-rpc-server bash
+  # you are inside the mc-rpc-server container
+  root@container# supervisorctl status megacoind
   root@container# cat /var/log/supervisor/supervisord.log
-  # Change to bitcore user
-  root@container# sudo su bitcore
-  bitcore@container# cat /home/bitcore/.bitcore/debug.log
-  bitcore@container# bitcore-cli getinfo
+  # Change to megacoin user
+  root@container# sudo su megacoin
+  megacoin@container# cat /home/megacoin/.megacoin/debug.log
+  megacoin@container# megacoin-cli getinfo
 ```
 
 ## Debbuging within a container during run (skip start.sh execution)
 ```
-docker run -p 40332:40332 -p 8555:8555 -p 9051:9051 --name btx-rpc-server -e BTXPWD='NEW_BTX_PWD' -v /home/bitcore:/home/bitcore:rw --entrypoint bash <repository>/btx-rpc-server
+docker run -p 40332:40332 -p 8555:8555 -p 9051:9051 --name mec-rpc-server -e MECPWD='NEW_MEC_PWD' -v /home/megacoin:/home/megacoin:rw --entrypoint bash <repository>/mec-rpc-server
 ```
 
 ## Stop docker container
 ```
-docker stop btx-rpc-server
-docker rm btx-rpc-server
+docker stop mec-rpc-server
+docker rm mec-rpc-server
 ```

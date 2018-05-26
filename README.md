@@ -1,5 +1,5 @@
 # Megacoin-MEC-RPC-Installer
-This script helps you to install a Megacoin MEC Node.
+This script helps you to install a Megacoin MEC Node as a docker container.
 
 ## Deploy as a docker container
 

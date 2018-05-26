@@ -1,6 +1,6 @@
-# BitCore RPC Server - Build Docker Image
+# MegaCoin RPC Server - Build Docker Image
 
-The Dockerfile will install all required stuff to run a BitCore RPC Server and is based on script btxsetup.sh (see: https://github.com/dArkjON/Bitcore-BTX-RPC-Installer/blob/master/btxsetup.sh)
+The Dockerfile will install all required stuff to run a MegaCoin RPC Server and is based on script btxsetup.sh (see: https://github.com/dArkjON/Bitcore-BTX-RPC-Installer/blob/master/btxsetup.sh)
 
 ## Requirements
 - Linux Ubuntu 16.04 LTS
@@ -13,8 +13,8 @@ apt-get install docker-ce -y
 
 ## Needed files
 - Dockerfile
-- bitcore.conf
-- bitcored.sv.conf
+- megacoin.conf
+- megacoind.sv.conf
 - start.sh
 
 ## Allocating 2GB Swapfile
@@ -28,12 +28,12 @@ swapon /swapfile
 
 ## Build docker image
 ```
-docker build [--build-arg BTXPWD='<bitcore user pwd>'] -t btx-rpc-server .
+docker build [--build-arg MECPWD='<bitcore user pwd>'] -t btx-rpc-server .
 ```
 
 ## Push docker image to hub.docker
 ```
-docker tag btx-rpc-server <repository>/btx-rpc-server
+docker tag mec-rpc-server <repository>/btx-rpc-server
 docker login -u <repository> -p"<PWD>"
-docker push <repository>/btx-rpc-server:<tag>
+docker push <repository>/mec-rpc-server:<tag>
 ```

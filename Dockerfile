@@ -13,7 +13,7 @@ LABEL maintainer="Jon D. (dArkjON), David B. (dalijolijo)"
 LABEL version="0.1"
 
 # Make ports available to the world outside this container
-EXPOSE 8555 9051 40332
+EXPOSE 7951
 
 USER root
 
@@ -26,7 +26,7 @@ ENV MECPWD "megacoin"
 RUN echo '*** MegaCoin MEC RPC Server ***'
 
 # Creating megacoin user
-RUN echo '*** Step 1/10 - creating megacoin user ***' && \
+RUN echo '*** Creating megacoin user ***' && \
     adduser --disabled-password --gecos "" megacoin && \
     usermod -a -G sudo,megacoin megacoin && \
     echo megacoin:$MECPWD | chpasswd

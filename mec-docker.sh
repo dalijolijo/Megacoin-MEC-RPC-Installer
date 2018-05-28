@@ -65,6 +65,8 @@ if [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]]; then
     ufw allow 22/tcp
     ufw limit 22/tcp
     ufw allow 7951/tcp
+    ufw allow 8556/tcp
+    ufw allow 9051/tcp
     # if other services run on other ports, they will be blocked!
     #ufw default deny incoming 
     ufw default allow outgoing 
@@ -79,7 +81,7 @@ if [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]]; then
                             software-properties-common
 else
     echo "Automated firewall setup for $OS ($VER) not supported!"
-    echo "Please open firewall ports 22, 7951 manually."
+    echo "Please open firewall ports 22, 7951, 8556 and 9051 manually."
     exit
 fi
 
@@ -88,4 +90,4 @@ fi
 #
 docker rm mec-rpc-server
 docker pull ${DOCKER_REPO}/mec-rpc-server
-docker run -p 7951:7951 --name mec-rpc-server -e MECPWD="${MECPWD}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server
+docker run -p 7951:7951 -p 8556:8556 -p 9051:9051 --name mec-rpc-server -e MECPWD="${MECPWD}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server

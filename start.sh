@@ -16,7 +16,7 @@ mkdir -p /home/megacoin/.megacoin
 chown -R megacoin:megacoin /home/megacoin/
 chown megacoin:megacoin /tmp/megacoin.conf
 sudo -u megacoin cp /tmp/megacoin.conf /home/megacoin/.megacoin/megacoin.conf
-sed -i "s/^\(rpcuser=\).*/rpcuser=mexrpcnode${MECPWD}/" /home/megacoin/.megacoin/megacoin.conf
+sed -i "s/^\(rpcuser=\).*/rpcuser=mecrpcnode${MECPWD}/" /home/megacoin/.megacoin/megacoin.conf
 sed -i "s/^\(rpcpassword=\).*/rpcpassword=${MECPWD}/" /home/megacoin/.megacoin/megacoin.conf
 
 #

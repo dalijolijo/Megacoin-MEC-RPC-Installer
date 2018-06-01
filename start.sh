@@ -9,12 +9,18 @@ BOOTSTRAP='bootstrap.tar.gz'
 echo megacoin:${MECPWD} | chpasswd
 
 #
+# Downloading megacoin.conf
+#
+cd /tmp/
+wget https://raw.githubusercontent.com/dalijolijo/Megacoin-MEC-RPC-Installer/master/megacoin.conf -O /tmp/megacoin.conf
+chown megacoin:megacoin /tmp/megacoin.conf
+
+#
 # Configure megacoin.conf
 #
 printf "** Configure megacoin.conf ***\n"
 mkdir -p /home/megacoin/.megacoin	
 chown -R megacoin:megacoin /home/megacoin/
-chown megacoin:megacoin /tmp/megacoin.conf
 sudo -u megacoin cp /tmp/megacoin.conf /home/megacoin/.megacoin/megacoin.conf
 sed -i "s/^\(rpcuser=\).*/rpcuser=mecrpcnode${MECPWD}/" /home/megacoin/.megacoin/megacoin.conf
 sed -i "s/^\(rpcpassword=\).*/rpcpassword=${MECPWD}/" /home/megacoin/.megacoin/megacoin.conf

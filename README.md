@@ -29,7 +29,7 @@ sudo curl -sSL https://get.docker.com | sh
 Login as root, then do:
 
 ```
-wget https://raw.githubusercontent.com/dalijolijo/Megacoin-MEC-RPC-Installer/master/mec-docker.sh
+wget https://raw.githubusercontent.com/LIMXTEC/Megacoin-MEC-RPC-Installer/master/mec-docker.sh
 chmod +x mec-docker.sh
 ./mec-docker.sh
 ```

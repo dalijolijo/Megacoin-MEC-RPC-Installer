@@ -31,7 +31,7 @@ docker build [--build-arg MECPWD='<megacoin user pwd>'] -t mec-rpc-server .
 
 ## Push docker image to hub.docker
 ```
-docker tag mec-rpc-server <repository>/mec-rpc-server
-docker login -u <repository> -p"<PWD>"
-docker push <repository>/mec-rpc-server:<tag>
+docker tag mec-rpc-server limxtec/mec-rpc-server
+docker login -u limxtec -p"<PWD>"
+docker push limxtec/mec-rpc-server:<tag>
 ```

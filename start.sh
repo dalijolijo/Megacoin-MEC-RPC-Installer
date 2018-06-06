@@ -12,7 +12,7 @@ echo megacoin:${MECPWD} | chpasswd
 # Downloading megacoin.conf
 #
 cd /tmp/
-wget https://raw.githubusercontent.com/dalijolijo/Megacoin-MEC-RPC-Installer/master/megacoin.conf -O /tmp/megacoin.conf
+wget https://raw.githubusercontent.com/LIMXTEC/Megacoin-MEC-RPC-Installer/master/megacoin.conf -O /tmp/megacoin.conf
 chown megacoin:megacoin /tmp/megacoin.conf
 
 #

@@ -69,7 +69,7 @@ if [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Debian" ]] || [[
         echo -n "Do you want to install firewall (ufw) and execute automated firewall setup? Enter Yes or No and Hit [ENTER]: "
         read FIRECONF
     else
-        echo "Found firewall ufw on your system. Automated firewall setup will open the following ports: 22, 8555, 8556, 9051"
+        echo "Found firewall ufw on your system. Automated firewall setup will open the following ports: 7951, 8556 and 9051"
         echo -n "Do you want to start automated firewall setup? Enter Yes or No and Hit [ENTER]: "
         read FIRECONF
 

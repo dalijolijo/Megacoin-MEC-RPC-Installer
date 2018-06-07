@@ -3,6 +3,9 @@ set -u
 
 DOCKER_REPO="dalijolijo"
 CONFIG="/home/megacoin/.megacoin/megacoin.conf"
+DEFAULT_PORT="7951"
+RPC_PORT="8556"
+TOR_PORT="9051"
 
 #
 # Check if megacoin.conf already exist. Set megacoin user pwd.
@@ -65,11 +68,11 @@ if [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Debian" ]] || [[
     which ufw >/dev/null
     if [ $? -ne 0 ];then
         echo "Missing firewall (ufw) on your system."
-        echo "Automated firewall setup will open the following ports: 22, 7951, 8556 and 9051"
+        echo "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}"
         echo -n "Do you want to install firewall (ufw) and execute automated firewall setup? Enter Yes or No and Hit [ENTER]: "
         read FIRECONF
     else
-        echo "Found firewall ufw on your system. Automated firewall setup will open the following ports: 7951, 8556 and 9051"
+        echo "Found firewall ufw on your system. Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}"
         echo -n "Do you want to start automated firewall setup? Enter Yes or No and Hit [ENTER]: "
         read FIRECONF
 
@@ -86,9 +89,9 @@ if [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Debian" ]] || [[
            ufw logging on
            ufw allow 22/tcp
            ufw limit 22/tcp
-           ufw allow 7951/tcp
-           ufw allow 8556/tcp
-           ufw allow 9051/tcp
+           ufw allow ${DEFAULT_PORT}/tcp
+           ufw allow ${RPC_PORT}/tcp
+           ufw allow ${TOR_PORT}/tcp
            # if other services run on other ports, they will be blocked!
            #ufw default deny incoming
            ufw default allow outgoing
@@ -105,7 +108,7 @@ if [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Debian" ]] || [[
                             software-properties-common
 else
     echo "Automated firewall setup for $OS ($VER) not supported!"
-    echo "Please open firewall ports 22, 7951, 8556 and 9051 manually."
+    echo "Please open firewall ports 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT} manually."
     exit
 fi
 
@@ -114,4 +117,4 @@ fi
 #
 docker rm mec-rpc-server
 docker pull ${DOCKER_REPO}/mec-rpc-server
-docker run -p 7951:7951 -p 8556:8556 -p 9051:9051 --name mec-rpc-server -e MECPWD="${MECPWD}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server
+docker run -p ${DEFAULT_PORT}:${DEFAULT_PORT} -p ${RPC_PORT}:${RPC_PORT} -p ${TOR_PORT}:${TOR_PORT} --name mec-rpc-server -e MECPWD="${MECPWD}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server

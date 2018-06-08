@@ -24,7 +24,7 @@ then
 fi
 
 if [[ $REUSE =~ "N" ]] || [[ $REUSE =~ "n" ]]; then
-        printf "\nEnter new password for [bitcore] user and Hit [ENTER]: "
+        printf "\nEnter new password for [megacoin] user and Hit [ENTER]: "
         read MECPWD
 else
         source $CONFIG

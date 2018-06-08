@@ -3,6 +3,7 @@ set -u
 
 DOCKER_REPO="dalijolijo"
 CONFIG="/home/megacoin/.megacoin/megacoin.conf"
+CONTAINER_NAME="mec-rpc-server"
 DEFAULT_PORT="7951"
 RPC_PORT="8556"
 TOR_PORT="9051"
@@ -14,12 +15,12 @@ clear
 REUSE="No"
 printf "\nDOCKER SETUP FOR MEGACOIN (MEC) RPC SERVER\n"
 printf "\nSetup Config file"
-printf "\n-----------------\n"
+printf "\n-----------------"
 if [ -f "$CONFIG" ]
 then
-        printf "Found $CONFIG on your system.\n"
+        printf "\nFound $CONFIG on your system.\n"
         printf "\nDo you want to re-use this existing config file?\n" 
-        printf "Enter Yes or No and Hit [ENTER]: "
+        printf "Enter [Y]es or [N]o and Hit [ENTER]: "
         read REUSE
 fi
 
@@ -80,13 +81,13 @@ if [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Debian" ]] || [[
         printf "Missing firewall (ufw) on your system.\n"
         printf "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}\n"
         printf "\nDo you want to install firewall (ufw) and execute automated firewall setup?\n"
-        printf "Enter Yes or No and Hit [ENTER]: "
+        printf "Enter [Y]es or [N]o and Hit [ENTER]: "
         read FIRECONF
     else
         printf "Found firewall ufw on your system.\n"
         printf "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}\n"
         printf "\nDo you want to start automated firewall setup?\n"
-        printf "Enter Yes or No and Hit [ENTER]: "
+        printf "Enter [Y]es or [N]o and Hit [ENTER]: "
         read FIRECONF
     fi
 
@@ -132,6 +133,39 @@ fi
 #
 printf "\nStart Docker container"
 printf "\n----------------------\n"
-docker rm mec-rpc-server
+sudo docker ps | grep ${CONTAINER_NAME} >/dev/null
+if [ $? -eq 0 ];then
+    printf "Conflict! The container name \'${CONTAINER_NAME}\' is already in use.\n"
+    printf "\nDo you want to stop the running container to start the new one?\n"
+    printf "Enter [Y]es or [N]o and Hit [ENTER]: "
+    read STOP
+
+    if [[ $STOP =~ "Y" ]] || [[ $STOP =~ "y" ]]; then
+        docker stop ${CONTAINER_NAME}
+    else
+	printf "\nDocker Setup Result"
+        printf "\n----------------------\n"
+        printf "Canceled the Docker Setup without starting Megacoin RPC Server Docker Container.\n\n"
+	exit 1
+    fi
+fi
+docker rm ${CONTAINER_NAME} >/dev/null
 docker pull ${DOCKER_REPO}/mec-rpc-server
-docker run -p ${DEFAULT_PORT}:${DEFAULT_PORT} -p ${RPC_PORT}:${RPC_PORT} -p ${TOR_PORT}:${TOR_PORT} --name mec-rpc-server -e MECPWD="${MECPWD}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server
+docker run -p ${DEFAULT_PORT}:${DEFAULT_PORT} -p ${RPC_PORT}:${RPC_PORT} -p ${TOR_PORT}:${TOR_PORT} --name ${CONTAINER_NAME} -e MECPWD="${MECPWD}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server
+
+#
+# Show result and give user instructions
+#
+clear
+printf "\nDocker Setup Result"
+printf "\n----------------------\n"
+sudo docker ps | grep ${CONTAINER_NAME} >/dev/null
+if [ $? -ne 0 ];then
+    printf "Sorry! Something went wrong. :(\n"
+else
+    printf "GREAT! Your Megacoin RPC Server Docker Container is running now! :)\n"
+    printf "\nShow your running docker container \'${CONTAINER_NAME}\' with 'docker ps'\n"
+    sudo docker ps | grep ${CONTAINER_NAME}
+    printf "\nJump inside the docker container with 'docker exec -it ${CONTAINER_NAME} bash'\n"
+    printf "HAVE FUN!\n\n"
+fi

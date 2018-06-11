@@ -180,7 +180,7 @@ if [[ $OS =~ "Fedora" ]] || [[ $OS =~ "fedora" ]] || [[ $OS =~ "CentOS" ]] || [[
 # Configuration for Ubuntu/Debian/Mint
 elif [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Debian" ]] || [[ $OS =~ "debian" ]] || [[ $OS =~ "Mint" ]] || [[ $OS =~ "mint" ]]; then
     
-# Check if firewall ufw is installed
+    # Check if firewall ufw is installed
     which ufw >/dev/null
     if [ $? -ne 0 ];then
         printf "Missing firewall (ufw) on your system.\n"
@@ -230,7 +230,6 @@ elif [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Debian" ]] || 
 else
     printf "Automated firewall setup for $OS ($VER) not supported!\n"
     printf "Please open firewall ports 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT} manually.\n"
-    exit
 fi
 
 #

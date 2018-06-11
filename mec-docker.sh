@@ -68,6 +68,12 @@ else
 fi
 printf "Found installed $OS ($VER)\n"
 
+#
+# Setup Firewall, install further packages...
+#
+printf "\nSetup Firewall"
+printf "\n--------------\n"
+
 # Configuration for Fedora
 if [[ $OS =~ "Fedora" ]] || [[ $OS =~ "fedora" ]] || [[ $OS =~ "CentOS" ]] || [[ $OS =~ "centos" ]]; then
     FIREWALLD=0
@@ -187,7 +193,7 @@ if [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Debian" ]] || [[
         printf "Enter [Y]es or [N]o and Hit [ENTER]: "
         read FIRECONF
     else
-        printf "Found firewall ufw on your system.\n"
+        printf "Found firewall 'ufw' on your system.\n"
         printf "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}\n"
         printf "\nDo you want to start automated firewall setup?\n"
         printf "Enter [Y]es or [N]o and Hit [ENTER]: "

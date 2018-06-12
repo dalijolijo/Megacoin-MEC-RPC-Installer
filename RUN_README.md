@@ -16,12 +16,12 @@ yes | ufw enable
 
 ## Pull docker image
 ```
-docker pull <repository>/mec-rpc-server
+docker pull limxtec/mec-rpc-server
 ```
 
 ## Run docker container
 ```
-docker run -p 7951:7951 -p 8556:8556 -p 9051:9051 --name mec-rpc-server -e MECPWD='NEW_MEC_PWD' -v /home/megacoin:/home/megacoin:rw -d <repository>/mec-rpc-server
+docker run -p 7951:7951 -p 8556:8556 -p 9051:9051 --name mec-rpc-server -e MECPWD='NEW_MEC_PWD' -v /home/megacoin:/home/megacoin:rw -d limxtec/mec-rpc-server
 docker ps
 ```
 
@@ -43,7 +43,7 @@ docker exec -it mec-rpc-server bash
 
 ## Debbuging within a container during run (skip start.sh execution)
 ```
-docker run -p 7951:7951 --name mec-rpc-server -e MECPWD='NEW_MEC_PWD' -v /home/megacoin:/home/megacoin:rw --entrypoint bash <repository>/mec-rpc-server
+docker run -p 7951:7951 --name mec-rpc-server -e MECPWD='NEW_MEC_PWD' -v /home/megacoin:/home/megacoin:rw --entrypoint bash limxtec/mec-rpc-server
 ```
 
 ## Stop docker container

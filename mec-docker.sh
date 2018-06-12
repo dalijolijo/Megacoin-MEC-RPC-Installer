@@ -1,7 +1,7 @@
 #!/bin/bash
 set -u
 
-DOCKER_REPO="dalijolijo"
+DOCKER_REPO="limxtec"
 CONFIG="/home/megacoin/.megacoin/megacoin.conf"
 CONTAINER_NAME="mec-rpc-server"
 DEFAULT_PORT="7951"

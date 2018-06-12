@@ -3,19 +3,29 @@ set -u
 
 DOCKER_REPO="limxtec"
 CONFIG="/home/megacoin/.megacoin/megacoin.conf"
+CONTAINER_NAME="mec-rpc-server"
+DEFAULT_PORT="7951"
+RPC_PORT="8556"
+TOR_PORT="9051"
 
 #
 # Check if megacoin.conf already exist. Set megacoin user pwd.
 #
+clear
 REUSE="No"
+printf "\nDOCKER SETUP FOR MEGACOIN (MEC) RPC SERVER\n"
+printf "\nSetup Config file"
+printf "\n-----------------"
 if [ -f "$CONFIG" ]
 then
-        echo -n "Found $CONFIG on your system. Do you want to re-use this existing config file? Enter Yes or No and Hit [ENTER]: "
+        printf "\nFound $CONFIG on your system.\n"
+        printf "\nDo you want to re-use this existing config file?\n" 
+        printf "Enter [Y]es or [N]o and Hit [ENTER]: "
         read REUSE
 fi
 
 if [[ $REUSE =~ "N" ]] || [[ $REUSE =~ "n" ]]; then
-        echo -n "Enter new password for [megacoin] user and Hit [ENTER]: "
+        printf "\nEnter new password for [megacoin] user and Hit [ENTER]: "
         read MECPWD
 else
         source $CONFIG
@@ -23,8 +33,10 @@ else
 fi
 
 #
-# Check distro version for further configurations (TODO)
+# Check distro version for further configurations
 #
+printf "\nDocker Host Operating System"
+printf "\n----------------------------\n"
 if [ -f /etc/os-release ]; then
     # freedesktop.org and systemd
     . /etc/os-release
@@ -54,40 +66,210 @@ else
     OS=$(uname -s)
     VER=$(uname -r)
 fi
+printf "Found installed $OS $VER\n"
 
-# Configurations for Ubuntu
-if [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Mint" ]]; then
-    echo "Configuration for $OS ($VER)..."
- 
-    # Firewall settings (for Ubuntu)
-    echo "Setup firewall..."
-    ufw logging on
-    ufw allow 22/tcp
-    ufw limit 22/tcp
-    ufw allow 7951/tcp
-    ufw allow 8556/tcp
-    ufw allow 9051/tcp
-    # if other services run on other ports, they will be blocked!
-    #ufw default deny incoming 
-    ufw default allow outgoing 
-    yes | ufw enable
+#
+# Setup Firewall, install further packages...
+#
+printf "\nSetup Firewall"
+printf "\n--------------\n"
 
-    # Installation further package (Ubuntu 16.04)
-    echo "Install further packages..."
+# Configuration for Fedora
+if [[ $OS =~ "Fedora" ]] || [[ $OS =~ "fedora" ]] || [[ $OS =~ "CentOS" ]] || [[ $OS =~ "centos" ]]; then
+    FIREWALLD=0
+
+    # Check if firewalld is installed
+    which firewalld >/dev/null
+    if [ $? -eq 0 ]; then
+        printf "Found firewall 'firewalld' on your system.\n"
+        printf "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}\n"
+        printf "\nDo you want to start automated firewall setup?\n"
+        printf "Enter [Y]es or [N]o and Hit [ENTER]: "
+        read FIRECONF
+        
+        if [[ $FIRECONF =~ "Y" ]] || [[ $FIRECONF =~ "y" ]]; then
+
+            # Firewall settings
+            printf "\nSetup firewall...\n"
+            firewall-cmd --permanent --zone=public --add-port=22/tcp
+            firewall-cmd --permanent --zone=public --add-port=${DEFAULT_PORT}/tcp
+            firewall-cmd --permanent --zone=public --add-port=${RPC_PORT}/tcp
+            firewall-cmd --permanent --zone=public --add-port=${TOR_PORT}/tcp
+            firewall-cmd --reload
+	fi
+        FIREWALLD=1
+    fi
+
+    if [ $FIREWALLD -ne 1 ]; then
+    
+        # Check if ufw is installed
+        which ufw >/dev/null
+        if [ $? -ne 0 ]; then
+            if [[ $OS =~ "CentOS" ]] || [[ $OS =~ "centos" ]]; then
+                printf "Missing firewall (firewalld) on your system.\n"
+                printf "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}\n"
+                printf "\nDo you want to install firewall (firewalld) and execute automated firewall setup?\n"
+                printf "Enter [Y]es or [N]o and Hit [ENTER]: "
+                read FIRECONF
+                
+                if [[ $FIRECONF =~ "Y" ]] || [[ $FIRECONF =~ "y" ]]; then
+                    #Installation of ufw, if not installed yet
+                    which ufw >/dev/null
+                    if [ $? -ne 0 ];then
+                        sudo yum install -y firewalld firewall-config
+                        systemctl start firewalld.service
+                        systemctl enable firewalld.service
+                    fi
+
+                    # Firewall settings
+                    printf "\nSetup firewall...\n"
+                    firewall-cmd --permanent --zone=public --add-port=22/tcp
+                    firewall-cmd --permanent --zone=public --add-port=${DEFAULT_PORT}/tcp
+                    firewall-cmd --permanent --zone=public --add-port=${RPC_PORT}/tcp
+                    firewall-cmd --permanent --zone=public --add-port=${TOR_PORT}/tcp
+                    firewall-cmd --reload
+                fi
+            else
+                printf "Missing firewall (ufw) on your system.\n"
+                printf "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}\n"
+                printf "\nDo you want to install firewall (ufw) and execute automated firewall setup?\n"
+                printf "Enter [Y]es or [N]o and Hit [ENTER]: "
+                read FIRECONF
+            fi
+        else
+            printf "Found firewall 'ufw' on your system.\n"
+            printf "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}\n"
+            printf "\nDo you want to start automated firewall setup?\n"
+            printf "Enter [Y]es or [N]o and Hit [ENTER]: "
+            read FIRECONF
+        fi
+
+        if [[ $FIRECONF =~ "Y" ]] || [[ $FIRECONF =~ "y" ]]; then
+            #Installation of ufw, if not installed yet
+            which ufw >/dev/null
+            if [ $? -ne 0 ];then
+               sudo yum install -y ufw
+            fi
+
+            # Firewall settings
+            printf "\nSetup firewall...\n"
+            ufw logging on
+            ufw allow 22/tcp
+            ufw limit 22/tcp
+            ufw allow ${DEFAULT_PORT}/tcp
+            ufw allow ${RPC_PORT}/tcp
+            ufw allow ${TOR_PORT}/tcp
+            # if other services run on other ports, they will be blocked!
+            #ufw default deny incoming
+            ufw default allow outgoing
+            yes | ufw enable
+        fi
+    fi
+
+    # Installation further package
+    printf "\nPackages Setup"
+    printf "\n--------------\n"
+    printf "Install further packages...\n"
+    sudo yum install -y ca-certificates \
+                        curl
+
+    # Start and activate docker
+    systemctl start docker.service
+    systemctl enable docker.service
+
+# Configuration for Ubuntu/Debian/Mint
+elif [[ $OS =~ "Ubuntu" ]] || [[ $OS =~ "ubuntu" ]] || [[ $OS =~ "Debian" ]] || [[ $OS =~ "debian" ]] || [[ $OS =~ "Mint" ]] || [[ $OS =~ "mint" ]]; then
+    
+    # Check if firewall ufw is installed
+    which ufw >/dev/null
+    if [ $? -ne 0 ];then
+        printf "Missing firewall (ufw) on your system.\n"
+        printf "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}\n"
+        printf "\nDo you want to install firewall (ufw) and execute automated firewall setup?\n"
+        printf "Enter [Y]es or [N]o and Hit [ENTER]: "
+        read FIRECONF
+    else
+        printf "Found firewall 'ufw' on your system.\n"
+        printf "Automated firewall setup will open the following ports: 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT}\n"
+        printf "\nDo you want to start automated firewall setup?\n"
+        printf "Enter [Y]es or [N]o and Hit [ENTER]: "
+        read FIRECONF
+    fi
+
+    if [[ $FIRECONF =~ "Y" ]] || [[ $FIRECONF =~ "y" ]]; then
+        # Installation of ufw, if not installed yet
+        which ufw >/dev/null
+        if [ $? -ne 0 ];then
+           apt-get update
+           sudo apt-get install -y ufw
+        fi
+
+        # Firewall settings
+        printf "\nSetup firewall...\n"
+        ufw logging on
+        ufw allow 22/tcp
+        ufw limit 22/tcp
+        ufw allow ${DEFAULT_PORT}/tcp
+        ufw allow ${RPC_PORT}/tcp
+        ufw allow ${TOR_PORT}/tcp
+        # if other services run on other ports, they will be blocked!
+        #ufw default deny incoming
+        ufw default allow outgoing
+        yes | ufw enable
+    fi
+
+    # Installation further package
+    printf "\nPackages Setup"
+    printf "\n--------------\n"
+    printf "Install further packages...\n"
     apt-get update
     sudo apt-get install -y apt-transport-https \
                             ca-certificates \
                             curl \
                             software-properties-common
 else
-    echo "Automated firewall setup for $OS ($VER) not supported!"
-    echo "Please open firewall ports 22, 7951, 8556 and 9051 manually."
-    exit
+    printf "Automated firewall setup for $OS ($VER) not supported!\n"
+    printf "Please open firewall ports 22, ${DEFAULT_PORT}, ${RPC_PORT} and ${TOR_PORT} manually.\n"
 fi
 
 #
 # Pull docker images and run the docker container
 #
-docker rm mec-rpc-server
+printf "\nStart Docker container"
+printf "\n----------------------\n"
+sudo docker ps | grep ${CONTAINER_NAME} >/dev/null
+if [ $? -eq 0 ];then
+    printf "Conflict! The container name \'${CONTAINER_NAME}\' is already in use.\n"
+    printf "\nDo you want to stop the running container to start the new one?\n"
+    printf "Enter [Y]es or [N]o and Hit [ENTER]: "
+    read STOP
+
+    if [[ $STOP =~ "Y" ]] || [[ $STOP =~ "y" ]]; then
+        docker stop ${CONTAINER_NAME}
+    else
+	printf "\nDocker Setup Result"
+        printf "\n----------------------\n"
+        printf "Canceled the Docker Setup without starting Megacoin RPC Server Docker Container.\n\n"
+	exit 1
+    fi
+fi
+docker rm ${CONTAINER_NAME} >/dev/null
 docker pull ${DOCKER_REPO}/mec-rpc-server
-docker run -p 7951:7951 -p 8556:8556 -p 9051:9051 --name mec-rpc-server -e MECPWD="${MECPWD}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server
+docker run -p ${DEFAULT_PORT}:${DEFAULT_PORT} -p ${RPC_PORT}:${RPC_PORT} -p ${TOR_PORT}:${TOR_PORT} --name ${CONTAINER_NAME} -e MECPWD="${MECPWD}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server
+
+#
+# Show result and give user instructions
+#
+clear
+printf "\nDocker Setup Result"
+printf "\n----------------------\n"
+sudo docker ps | grep ${CONTAINER_NAME} >/dev/null
+if [ $? -ne 0 ];then
+    printf "Sorry! Something went wrong. :(\n"
+else
+    printf "GREAT! Your Megacoin RPC Server Docker Container is running now! :)\n"
+    printf "\nShow your running docker container \'${CONTAINER_NAME}\' with 'docker ps'\n"
+    sudo docker ps | grep ${CONTAINER_NAME}
+    printf "\nJump inside the docker container with 'docker exec -it ${CONTAINER_NAME} bash'\n"
+    printf "HAVE FUN!\n\n"
+fi

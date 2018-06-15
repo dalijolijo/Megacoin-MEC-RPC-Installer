@@ -16,7 +16,7 @@ yes | ufw enable
 
 ## Pull docker image
 ```
-docker pull <repository>/mec-rpc-server
+docker pull limxtec/mec-rpc-server
 ```
 
 ## Run docker container

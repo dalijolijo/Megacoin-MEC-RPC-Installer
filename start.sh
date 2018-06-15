@@ -1,8 +1,6 @@
 #!/bin/bash
 set -u
 
-BOOTSTRAP='bootstrap.tar.gz'
-
 #
 # Set passwd of megacoin user
 #
@@ -30,8 +28,8 @@ sed -i "s/^\(rpcpassword=\).*/rpcpassword=${MECPWD}/" /home/megacoin/.megacoin/m
 #
 printf "** Downloading bootstrap file ***\n"
 cd /home/megacoin/.megacoin/
-if [ ! -d /home/megacoin/.megacoin/blocks ] && [ "$(curl -Is https://megacoin.eu/${BOOTSTRAP} | head -n 1 | tr -d '\r\n')" = "HTTP/1.1 200 OK" ] ; then \
-        sudo -u megacoin wget https://megacoin.eu/${BOOTSTRAP}; \
+if [ ! -d /home/megacoin/.megacoin/blocks ] && [ "$(curl -Is https://${WEB}/${BOOTSTRAP} | head -n 1 | tr -d '\r\n')" = "HTTP/1.1 200 OK" ] ; then \
+        sudo -u megacoin wget https://${WEB}/${BOOTSTRAP}; \
         sudo -u megacoin tar -xvzf ${BOOTSTRAP}; \
         sudo -u megacoin rm ${BOOTSTRAP}; \
 fi

@@ -7,6 +7,8 @@ CONTAINER_NAME="mec-rpc-server"
 DEFAULT_PORT="7951"
 RPC_PORT="8556"
 TOR_PORT="9051"
+WEB="megacoin.eu/downloads" # without "https://" and without the last "/" (only HTTPS accepted)
+BOOTSTRAP="bootstrap.tar.gz"
 
 #
 # Check if megacoin.conf already exist. Set megacoin user pwd.
@@ -255,7 +257,7 @@ if [ $? -eq 0 ];then
 fi
 docker rm ${CONTAINER_NAME} >/dev/null
 docker pull ${DOCKER_REPO}/mec-rpc-server
-docker run -p ${DEFAULT_PORT}:${DEFAULT_PORT} -p ${RPC_PORT}:${RPC_PORT} -p ${TOR_PORT}:${TOR_PORT} --name ${CONTAINER_NAME} -e MECPWD="${MECPWD}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server
+docker run -p ${DEFAULT_PORT}:${DEFAULT_PORT} -p ${RPC_PORT}:${RPC_PORT} -p ${TOR_PORT}:${TOR_PORT} --name ${CONTAINER_NAME} -e MECPWD="${MECPWD}" -e WEB="${WEB}" -e BOOTSTRAP="${BOOTSTRAP}" -v /home/megacoin:/home/megacoin:rw -d ${DOCKER_REPO}/mec-rpc-server
 
 #
 # Show result and give user instructions

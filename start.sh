@@ -20,8 +20,8 @@ printf "** Configure megacoin.conf ***\n"
 mkdir -p /home/megacoin/.megacoin	
 chown -R megacoin:megacoin /home/megacoin/
 sudo -u megacoin cp /tmp/megacoin.conf /home/megacoin/.megacoin/megacoin.conf
-sed -i "s/^\(rpcuser=\).*/rpcuser=mecrpcnode${MECPWD}/" /home/megacoin/.megacoin/megacoin.conf
-sed -i "s/^\(rpcpassword=\).*/rpcpassword=${MECPWD}/" /home/megacoin/.megacoin/megacoin.conf
+sed -i "s|^\(rpcuser=\).*|rpcuser=mecrpcnode$(openssl rand -base64 32)|g" /home/megacoin/.megacoin/megacoin.conf
+sed -i "s|^\(rpcpassword=\).*|rpcpassword=$(openssl rand -base64 32)|g" /home/megacoin/.megacoin/megacoin.conf
 
 #
 # Downloading bootstrap file

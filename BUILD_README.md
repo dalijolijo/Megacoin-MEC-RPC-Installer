@@ -26,7 +26,7 @@ swapon /swapfile
 
 ## Build docker image
 ```
-docker build [--build-arg MECPWD='<megacoin user pwd>'] -t mec-rpc-server .
+docker build -t mec-rpc-server .
 ```
 
 ## Push docker image to hub.docker

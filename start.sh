@@ -2,11 +2,6 @@
 set -u
 
 #
-# Set passwd of megacoin user
-#
-echo megacoin:${MECPWD} | chpasswd
-
-#
 # Downloading megacoin.conf
 #
 cd /tmp/

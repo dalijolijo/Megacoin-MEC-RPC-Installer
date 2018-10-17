@@ -2,7 +2,6 @@
 set -u
 
 GIT_REPO="dalijolijo"
-DOCKER_REPO="dalijolijo"
 GIT_PROJECT="Megacoin-MEC-RPC-Installer"
 DOCKER_REPO="dalijolijo"
 IMAGE_NAME="mec-rpc-server"

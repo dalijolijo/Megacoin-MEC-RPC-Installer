@@ -10,13 +10,13 @@
 FROM ubuntu:16.04
 
 LABEL maintainer="Jon D. (dArkjON), David B. (dalijolijo)"
-LABEL version="0.1"
+LABEL version="0.15.0.5"
 
 # Make ports available to the world outside this container
 # DefaultPort = 7951
 # RPCPort = 8556
 # TorPort = 9051
-EXPOSE 7951 8556 9051
+#deprecated: EXPOSE 7951 8556 9051
 
 USER root
 
@@ -91,9 +91,6 @@ RUN echo '*** Configure megacoin.conf ***' && \
 
 # Copy Supervisor Configuration
 COPY *.sv.conf /etc/supervisor/conf.d/
-
-# Logging outside docker container
-VOLUME /var/log
 
 # Copy start script
 RUN echo '*** Copy start script ***'

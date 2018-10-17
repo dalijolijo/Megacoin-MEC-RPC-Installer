@@ -1,4 +1,6 @@
 # Megacoin-MEC-RPC-Installer
+[![docker pulls](https://img.shields.io/docker/pulls/dalijolijo/mec-rpc-server.svg?style=flat)](https://hub.docker.com/r/dalijolijo/mec-rpc-server/)
+
 This script helps you to install a MegaCoin MEC Node as a docker container.
 
 ## Deploy as a docker container
@@ -29,9 +31,7 @@ sudo curl -sSL https://get.docker.com | sh
 Login as root, then do:
 
 ```
-wget https://raw.githubusercontent.com/LIMXTEC/Megacoin-MEC-RPC-Installer/master/mec-docker.sh
-chmod +x mec-docker.sh
-./mec-docker.sh
+sudo bash -c "$(curl -fsSL https://github.com/dalijolijo/Megacoin-MEC-RPC-Installer/raw/master/mec-docker.sh)"
 ```
 
 ### For more details to docker related stuff have a look at:

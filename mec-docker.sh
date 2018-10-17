@@ -1,9 +1,9 @@
 #!/bin/bash
 set -u
 
-GIT_REPO="dalijolijo"
+GIT_REPO="LIMXTEC"
 GIT_PROJECT="Megacoin-MEC-RPC-Installer"
-DOCKER_REPO="dalijolijo"
+DOCKER_REPO="limxtec"
 IMAGE_NAME="mec-rpc-server"
 IMAGE_TAG="0.15.0.5" #MEC Version 0.15.0.5
 CONFIG_PATH="/home/megacoin/.megacoin"
